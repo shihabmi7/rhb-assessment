@@ -2,6 +2,7 @@ package com.shihab.rhbaccess.order;
 
 import com.shihab.rhbaccess.order.dto.OrderRequest;
 import com.shihab.rhbaccess.order.dto.OrderResponse;
+import com.shihab.rhbaccess.order.dto.OrderStatusRequest;
 import com.shihab.rhbaccess.order.dto.OrderSummary;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -29,8 +30,8 @@ public class OrderController {
         return service.create(request);
     }
 
-    @PatchMapping("/{id}/status")
-    public OrderResponse updateStatus(@PathVariable Long id, @RequestParam OrderStatus status) {
-        return service.updateStatus(id, status);
+    @PutMapping("/{id}/status")
+    public OrderResponse updateStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusRequest request) {
+        return service.updateStatus(id, request.status());
     }
 }

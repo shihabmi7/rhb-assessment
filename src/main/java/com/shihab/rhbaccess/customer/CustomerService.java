@@ -36,14 +36,6 @@ public class CustomerService {
     }
 
     /** Full replace (PUT). */
-    public CustomerResponse update(Long id, CustomerRequest request) {
-        Customer c = find(id);
-        c.setName(request.name());
-        c.setEmail(request.email());
-        c.setCity(request.city());
-        return CustomerResponse.from(c);
-    }
-
     /** Partial update (PATCH). */
     public CustomerResponse patch(Long id, CustomerPatchRequest request) {
         Customer c = find(id);
@@ -55,10 +47,6 @@ public class CustomerService {
 
     public void delete(Long id) {
         repository.delete(find(id));
-    }
-
-    public boolean exists(Long id) {
-        return repository.existsById(id);
     }
 
     private Customer find(Long id) {

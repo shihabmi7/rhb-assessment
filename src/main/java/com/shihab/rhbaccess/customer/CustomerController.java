@@ -42,11 +42,6 @@ public class CustomerController {
         return ResponseEntity.created(URI.create("/api/customers/" + created.id())).body(created);
     }
 
-    @PutMapping("/{id}")
-    public CustomerResponse update(@PathVariable Long id, @Valid @RequestBody CustomerRequest request) {
-        return service.update(id, request);
-    }
-
     @PatchMapping("/{id}")
     public CustomerResponse patch(@PathVariable Long id, @Valid @RequestBody CustomerPatchRequest request) {
         return service.patch(id, request);
@@ -56,10 +51,5 @@ public class CustomerController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.HEAD)
-    public ResponseEntity<Void> head(@PathVariable Long id) {
-        return service.exists(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }

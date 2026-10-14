@@ -23,7 +23,37 @@
                 "1"
               ]
             }
-          }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/customers/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "customers",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Alice Tan\",\n  \"email\": \"alice@example.com\",\n  \"city\": \"Kuala Lumpur\"\n}"
+            }
+          ]
         },
         {
           "name": "Search customers (paged)",
@@ -63,7 +93,59 @@
                 }
               ]
             }
-          }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/customers/search?name=a&city=Penang&page=0&size=5&sort=name,asc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "customers",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "a"
+                    },
+                    {
+                      "key": "city",
+                      "value": "Penang"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "5"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "name,asc"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"id\": 5,\n      \"name\": \"Ethan Ng\",\n      \"email\": \"ethan@example.com\",\n      \"city\": \"Penang\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 5,\n  \"totalElements\": 1,\n  \"totalPages\": 1\n}"
+            }
+          ]
         },
         {
           "name": "Create customer",
@@ -89,34 +171,45 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Farah Hassan\",\n  \"email\": \"farah@example.com\",\n  \"city\": \"Ipoh\"\n}"
             }
-          }
-        },
-        {
-          "name": "Replace customer (PUT)",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/customers/1",
-              "host": [
-                "{{baseUrl}}"
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "customers"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Farah Hassan\",\n  \"email\": \"farah@example.com\",\n  \"city\": \"Ipoh\"\n}"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
-              "path": [
-                "api",
-                "customers",
-                "1"
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Alice Tan\",\n  \"email\": \"alice@example.com\",\n  \"city\": \"Melaka\"\n}"
+              "body": "{\n  \"id\": 6,\n  \"name\": \"Farah Hassan\",\n  \"email\": \"farah@example.com\",\n  \"city\": \"Ipoh\"\n}"
             }
-          }
+          ]
         },
         {
           "name": "Update customer (PATCH)",
@@ -164,24 +257,6 @@
           }
         },
         {
-          "name": "Head customer",
-          "request": {
-            "method": "HEAD",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/customers/1",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "customers",
-                "1"
-              ]
-            }
-          }
-        },
-        {
           "name": "Create customer - invalid (400)",
           "request": {
             "method": "POST",
@@ -205,7 +280,45 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"\",\n  \"email\": \"bad\"\n}"
             }
-          }
+          },
+          "response": [
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "customers"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"\",\n  \"email\": \"bad\"\n}"
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"timestamp\": \"2026-10-14T04:00:14.410577Z\",\n  \"status\": 400,\n  \"message\": \"Validation failed\",\n  \"details\": [\n    \"email: must be a well-formed email address\",\n    \"name: must not be blank\"\n  ]\n}"
+            }
+          ]
         }
       ]
     },
@@ -252,7 +365,43 @@
                 }
               ]
             }
-          }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/orders/with-customer?city=Kuala Lumpur",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    "with-customer"
+                  ],
+                  "query": [
+                    {
+                      "key": "city",
+                      "value": "Kuala Lumpur"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"orderId\": 1,\n    \"customerName\": \"Alice Tan\",\n    \"city\": \"Kuala Lumpur\",\n    \"product\": \"Laptop\",\n    \"amount\": 3499.0,\n    \"status\": \"PAID\"\n  },\n  {\n    \"orderId\": 2,\n    \"customerName\": \"Alice Tan\",\n    \"city\": \"Kuala Lumpur\",\n    \"product\": \"Mouse\",\n    \"amount\": 59.9,\n    \"status\": \"SHIPPED\"\n  },\n  {\n    \"orderId\": 4,\n    \"customerName\": \"Charlie Wong\",\n    \"city\": \"Kuala Lumpur\",\n    \"product\": \"Monitor\",\n    \"amount\": 899.0,\n    \"status\": \"PAID\"\n  }\n]"
+            }
+          ]
         },
         {
           "name": "Create order",
@@ -281,12 +430,17 @@
           }
         },
         {
-          "name": "Update order status",
+          "name": "Set order status (PUT)",
           "request": {
-            "method": "PATCH",
-            "header": [],
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/orders/1/status?status=SHIPPED",
+              "raw": "{{baseUrl}}/api/orders/1/status",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -295,13 +449,11 @@
                 "orders",
                 "1",
                 "status"
-              ],
-              "query": [
-                {
-                  "key": "status",
-                  "value": "SHIPPED"
-                }
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SHIPPED\"\n}"
             }
           }
         }
@@ -326,7 +478,37 @@
                 "google"
               ]
             }
-          }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/external/google",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "external",
+                    "google"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"url\": \"https://www.google.com\",\n  \"status\": 200,\n  \"contentLength\": 85104\n}"
+            }
+          ]
         }
       ]
     }
