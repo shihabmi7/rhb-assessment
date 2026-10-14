@@ -24,5 +24,7 @@ external-api:
   read-timeout-ms: 5000
 
 logging:
+  file:
+    name: logs/app.log
   level:
     com.shihab.rhbaccess.logging: INFO

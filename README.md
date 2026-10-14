@@ -5,6 +5,8 @@ Spring Boot 3 / Java 17 / Maven e-commerce API (customers and orders) on an in-m
 ## Run
     ./mvnw spring-boot:run
 
+Logs are written to the console and `logs/app.log`.
+
 App: http://localhost:8080, H2 console: http://localhost:8080/h2-console (JDBC URL `jdbc:h2:mem:rhbdb`, user `sa`, no password).
 
 ## Test
