@@ -53,6 +53,18 @@
               ],
               "body": "{\n  \"id\": 1,\n  \"name\": \"Alice Tan\",\n  \"email\": \"alice@example.com\",\n  \"city\": \"Kuala Lumpur\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has customer fields\", () => { const j = pm.response.json(); pm.expect(j).to.have.keys(\"id\",\"name\",\"email\",\"city\"); });"
+                ]
+              }
+            }
           ]
         },
         {
@@ -145,6 +157,18 @@
               ],
               "body": "{\n  \"content\": [\n    {\n      \"id\": 5,\n      \"name\": \"Ethan Ng\",\n      \"email\": \"ethan@example.com\",\n      \"city\": \"Penang\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 5,\n  \"totalElements\": 1,\n  \"totalPages\": 1\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Page shape and filter\", () => { const j = pm.response.json(); pm.expect(j).to.have.keys(\"content\",\"page\",\"size\",\"totalElements\",\"totalPages\"); j.content.forEach(c => pm.expect(c.city).to.eql(\"Penang\")); pm.expect(j.content.length).to.be.at.most(5); });"
+                ]
+              }
+            }
           ]
         },
         {
@@ -169,7 +193,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Farah Hassan\",\n  \"email\": \"farah@example.com\",\n  \"city\": \"Ipoh\"\n}"
+              "raw": "{\n  \"name\": \"Farah Hassan\",\n  \"email\": \"{{uniqueEmail}}\",\n  \"city\": \"Ipoh\"\n}"
             }
           },
           "response": [
@@ -209,6 +233,27 @@
               ],
               "body": "{\n  \"id\": 6,\n  \"name\": \"Farah Hassan\",\n  \"email\": \"farah@example.com\",\n  \"city\": \"Ipoh\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"uniqueEmail\", \"user\" + Date.now() + \"@example.com\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Returns Location header and body\", () => { const j = pm.response.json(); pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/api/customers/\" + j.id); pm.expect(j.name).to.eql(\"Farah Hassan\"); pm.collectionVariables.set(\"newCustomerId\", j.id); });"
+                ]
+              }
+            }
           ]
         },
         {
@@ -236,25 +281,19 @@
               "mode": "raw",
               "raw": "{\n  \"city\": \"Kuching\"\n}"
             }
-          }
-        },
-        {
-          "name": "Delete customer",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/customers/5",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "customers",
-                "5"
-              ]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Only city changed\", () => { const j = pm.response.json(); pm.expect(j.city).to.eql(\"Kuching\"); pm.expect(j.name).to.eql(\"Alice Tan\"); });"
+                ]
+              }
             }
-          }
+          ]
         },
         {
           "name": "Create customer - invalid (400)",
@@ -318,6 +357,47 @@
               ],
               "body": "{\n  \"timestamp\": \"2026-10-14T04:00:14.410577Z\",\n  \"status\": 400,\n  \"message\": \"Validation failed\",\n  \"details\": [\n    \"email: must be a well-formed email address\",\n    \"name: must not be blank\"\n  ]\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Lists validation errors\", () => { const j = pm.response.json(); pm.expect(j.message).to.eql(\"Validation failed\"); pm.expect(j.details.length).to.be.above(0); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete customer",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/customers/{{newCustomerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                "{{newCustomerId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
           ]
         }
       ]
@@ -341,7 +421,19 @@
                 "with-customer"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Joined fields present\", () => { const j = pm.response.json(); pm.expect(j.length).to.be.above(0); pm.expect(j[0]).to.have.keys(\"orderId\",\"customerName\",\"city\",\"product\",\"amount\",\"status\"); });"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Orders joined - filter by city",
@@ -401,6 +493,18 @@
               ],
               "body": "[\n  {\n    \"orderId\": 1,\n    \"customerName\": \"Alice Tan\",\n    \"city\": \"Kuala Lumpur\",\n    \"product\": \"Laptop\",\n    \"amount\": 3499.0,\n    \"status\": \"PAID\"\n  },\n  {\n    \"orderId\": 2,\n    \"customerName\": \"Alice Tan\",\n    \"city\": \"Kuala Lumpur\",\n    \"product\": \"Mouse\",\n    \"amount\": 59.9,\n    \"status\": \"SHIPPED\"\n  },\n  {\n    \"orderId\": 4,\n    \"customerName\": \"Charlie Wong\",\n    \"city\": \"Kuala Lumpur\",\n    \"product\": \"Monitor\",\n    \"amount\": 899.0,\n    \"status\": \"PAID\"\n  }\n]"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"All rows match city\", () => { const j = pm.response.json(); pm.expect(j.length).to.be.above(0); j.forEach(o => pm.expect(o.city).to.eql(\"Kuala Lumpur\")); });"
+                ]
+              }
+            }
           ]
         },
         {
@@ -427,7 +531,19 @@
               "mode": "raw",
               "raw": "{\n  \"customerId\": 1,\n  \"product\": \"Tablet\",\n  \"amount\": 1299.0\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Order starts PENDING\", () => { const j = pm.response.json(); pm.expect(j.status).to.eql(\"PENDING\"); pm.collectionVariables.set(\"newOrderId\", j.id); });"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Set order status (PUT)",
@@ -440,14 +556,14 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/orders/1/status",
+              "raw": "{{baseUrl}}/api/orders/{{newOrderId}}/status",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "orders",
-                "1",
+                "{{newOrderId}}",
                 "status"
               ]
             },
@@ -455,7 +571,19 @@
               "mode": "raw",
               "raw": "{\n  \"status\": \"SHIPPED\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Status updated\", () => pm.expect(pm.response.json().status).to.eql(\"SHIPPED\"));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -508,6 +636,18 @@
               ],
               "body": "{\n  \"url\": \"https://www.google.com\",\n  \"status\": 200,\n  \"contentLength\": 85104\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Reports upstream status\", () => { const j = pm.response.json(); pm.expect(j.status).to.eql(200); pm.expect(j.contentLength).to.be.above(0); });"
+                ]
+              }
+            }
           ]
         }
       ]
@@ -517,6 +657,18 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:8080"
+    },
+    {
+      "key": "newCustomerId",
+      "value": ""
+    },
+    {
+      "key": "newOrderId",
+      "value": ""
+    },
+    {
+      "key": "uniqueEmail",
+      "value": ""
     }
   ]
 }
